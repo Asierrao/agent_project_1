@@ -2,6 +2,39 @@ server:
   port: 8080
 
 spring:
+  profiles:
+    active: dev
+
+---
+# Dev profile - H2 in-memory (no MySQL needed to start coding)
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:erp_db;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+
+---
+# Prod profile - MySQL
+spring:
+  config:
+    activate:
+      on-profile: prod
   datasource:
     url: jdbc:mysql://localhost:3306/agent_project?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
@@ -10,7 +43,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+
+---
+# JWT config
+jwt:
+  secret: YWdlbnRfcHJvamVjdF9lcnBfc3lzdGVtXzIwMjVfc2VjcmV0X2tleV9mb3Jfand0
+  expiration: 86400000
+
+# Default admin account
+app:
+  admin:
+    username: admin
+    password: admin123
